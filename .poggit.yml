@@ -1,0 +1,9 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/thebigsmileXD/skinapi
+branches:
+- master
+projects:
+  skinapi:
+    path: ""
+    model: virion
+    type: library
+...
