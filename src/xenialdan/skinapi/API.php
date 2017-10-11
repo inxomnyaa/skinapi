@@ -75,9 +75,9 @@ class API{
 	/**
 	 * NOTICE: Only merges the images, not the json data!
 	 * @param Skin[] $skins
-	 * @return mixed
+	 * @return resource
 	 */
-	public static function mergeSkins(...$skins){
+	public static function mergeSkinsToImage(...$skins){
 		$baseskin = $skins[0];
 		$baseimg = self::toImage($baseskin->getSkinData());
 		$base = imagecreatetruecolor(imagesx($baseimg), imagesy($baseimg));
@@ -88,6 +88,24 @@ class API{
 			imagecopy($base, $img, 0, 0, 0, 0, imagesx($img), imagesy($img));
 		}
 		return $base;
+	}
+
+	/**
+	 * NOTICE: Only merges the images, not the json data!
+	 * @param string[] $skinDataSets
+	 * @return string
+	 */
+	public static function mergeSkinData(...$skinDataSets){
+		$baseskin = $skinDataSets[0];
+		$baseimg = self::toImage($baseskin);
+		$base = imagecreatetruecolor(imagesx($baseimg), imagesy($baseimg));
+		imagesavealpha($base, true);
+		imagefill($base, 0, 0, imagecolorallocatealpha($base, 0, 0, 0, 127));
+		foreach ($skinDataSets as $skinData){
+			$img = self::toImage($skinData);
+			imagecopy($base, $img, 0, 0, 0, 0, imagesx($img), imagesy($img));
+		}
+		return self::fromImage($base);
 	}
 
 	/**
@@ -135,7 +153,7 @@ class API{
 	 * @param $json
 	 * @return string
 	 */
-	public static function addJSON(Skin $skin, $json){
+	public static function addJSONtoExistingSkin(Skin $skin, $json){
 		$skingeometry = $skin->getGeometryData();
 		$base = json_decode($skingeometry, true);
 		$json = str_replace('%s', $skin->getGeometryName(), $json);
