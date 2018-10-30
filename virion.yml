@@ -1,6 +1,6 @@
 name: skinapi
-version: 0.2.0
+version: 0.2.1
 antigen: xenialdan\skinapi
-api: [3.0.0-ALPHA7,3.0.0-ALPHA8,3.0.0-ALPHA9]
+api: [3.0.0,4.0.0]
 php: [7.2]
 author: XenialDan
