@@ -4,6 +4,7 @@ namespace xenialdan\skinapi;
 
 use pocketmine\entity\Skin;
 use pocketmine\Player;
+use pocketmine\Server;
 use pocketmine\utils\Config;
 
 /**
@@ -41,6 +42,9 @@ class API{
 	 * @param string $path
 	 */
 	public static function saveSkin(Skin $skin, string $path){
+        if (!extension_loaded("gd")) {
+            Server::getInstance()->getLogger()->error("GD library is not enabled! Please uncomment gd2 in php.ini!");
+        }
 		$config = new Config($path . 'skin.json');
 		$config->setAll([$skin->getSkinId() => [$skin->getSkinData(), $skin->getGeometryData()]]);
 		$config->save();
@@ -61,6 +65,9 @@ class API{
 	 * @return mixed
 	 */
 	public static function mergeParts(...$parts){
+        if (!extension_loaded("gd")) {
+            Server::getInstance()->getLogger()->error("GD library is not enabled! Please uncomment gd2 in php.ini!");
+        }
 		$baseimg = $parts[0];
 		$base = imagecreatetruecolor(imagesx($baseimg), imagesy($baseimg));
 		#imagealphablending($base, false);
@@ -169,6 +176,9 @@ class API{
 	 * @return resource
 	 */
 	public static function toImage($data, $height = 64, $width = 64){
+        if (!extension_loaded("gd")) {
+            Server::getInstance()->getLogger()->error("GD library is not enabled! Please uncomment gd2 in php.ini!");
+        }
 		$pixelarray = str_split(bin2hex($data), 8);
 		$image = imagecreatetruecolor($width, $height);
 		imagealphablending($image, false);//do not touch
@@ -193,6 +203,9 @@ class API{
 	 * @return string
 	 */
 	public static function fromImage($img){
+        if (!extension_loaded("gd")) {
+            Server::getInstance()->getLogger()->error("GD library is not enabled! Please uncomment gd2 in php.ini!");
+        }
 		$combine = [];
 		for ($y = 0; $y < imagesy($img); $y++){
 			for ($x = 0; $x < imagesx($img); $x++){
