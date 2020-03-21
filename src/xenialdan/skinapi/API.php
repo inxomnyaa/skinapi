@@ -40,10 +40,14 @@ class API{
 	/**
 	 * @param Skin $skin
 	 * @param string $path
+     * @throws \InvalidArgumentException
 	 */
 	public static function saveSkin(Skin $skin, string $path){
         if (!extension_loaded("gd")) {
             Server::getInstance()->getLogger()->error("GD library is not enabled! Please uncomment gd2 in php.ini!");
+        }
+        if (strpos($path,".png") === false) {
+            throw new \InvalidArgumentException("Missing a filename in the path");
         }
 		$config = new Config($path . 'skin.json');
 		$config->setAll([$skin->getSkinId() => [$skin->getSkinData(), $skin->getGeometryData()]]);
@@ -206,17 +210,18 @@ class API{
         if (!extension_loaded("gd")) {
             Server::getInstance()->getLogger()->error("GD library is not enabled! Please uncomment gd2 in php.ini!");
         }
-		$combine = [];
+        $bytes = '';
 		for ($y = 0; $y < imagesy($img); $y++){
 			for ($x = 0; $x < imagesx($img); $x++){
-				$color = imagecolorsforindex($img, imagecolorat($img, $x, $y));
-				//TODO fix uneven alpha - if even possible..
-				$color['alpha'] = (($color['alpha'] << 1) ^ 0xff) - 1; // back = (($alpha << 1) ^ 0xff) - 1
-				$combine[] = sprintf("%02x%02x%02x%02x", $color['red'], $color['green'], $color['blue'], $color['alpha']??0);
+                $rgba = @imagecolorat($img, $x, $y);
+                $a = ((~((int)($rgba >> 24))) << 1) & 0xff;
+                $r = ($rgba >> 16) & 0xff;
+                $g = ($rgba >> 8) & 0xff;
+                $b = $rgba & 0xff;
+                $bytes .= chr($r) . chr($g) . chr($b) . chr($a);
 			}
 		}
-		$data = hex2bin(implode('', $combine));
-		return $data;
+		return $bytes;
 	}
 
 	/**
